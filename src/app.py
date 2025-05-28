@@ -418,33 +418,5 @@ def setup_admin():
         db.session.rollback()
         return jsonify({"status": "error", "message": f"Erro ao criar usuário administrador: {e}"})
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Criar tabelas se não existirem
-        
-        # Verificar se já existe algum usuário, se não, criar um administrador padrão
-        if User.query.count() == 0:
-            admin_user = User(
-                fullName="Administrador do Sistema",
-                email="admin@plataforma-lotus.com",
-                username="admin",
-                profile="administrador"
-            )
-            admin_user.set_password("admin123")  # Senha inicial que deve ser alterada após o primeiro login
-            
-            try:
-                db.session.add(admin_user)
-                db.session.commit()
-                print("Usuário administrador inicial criado com sucesso.")
-                print("Username: admin")
-                print("Senha: admin123")
-            except Exception as e:
-                db.session.rollback()
-                print(f"Erro ao criar usuário administrador inicial: {e}")
-    
-    # Iniciar o servidor Flask
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
-
 with app.app_context():
     db.create_all()
