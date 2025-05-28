@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ report_data.title }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 1.5cm;
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 9pt;
+                color: #666;
+            }
+            @bottom-left {
+                content: "Relatório gerado automaticamente por 🟢 Plataforma Analítica Lotus | Unimed + EVS";
+                font-size: 8pt;
+                color: #666;
+            }
+             @bottom-right {
+                content: "Local: ____________ Data: ____/____/____ Assinatura: ___________________";
+                font-size: 8pt;
+                color: #666;
+            }
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            color: #00509E; /* Azul EVS */
+            margin-bottom: 0.5em;
+            line-height: 1.2;
+        }
+        h1 {
+            font-size: 18pt;
+            text-align: center;
+            border-bottom: 2px solid #00734A; /* Verde Unimed */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 14pt;
+            margin-top: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+        h3 {
+            font-size: 12pt;
+            margin-top: 15px;
+        }
+        h4 {
+            font-size: 10pt;
+            font-style: italic;
+        }
+        p {
+            margin-bottom: 0.8em;
+        }
+        strong {
+            font-weight: bold;
+        }
+        ul {
+            padding-left: 20px;
+            margin-bottom: 1em;
+        }
+        li {
+            margin-bottom: 0.3em;
+        }
+        .report-header, .audit-info, .report-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fdfdfd;
+        }
+        .audit-info p, .report-header p {
+            margin-bottom: 0.4em;
+            font-size: 9pt;
+        }
+        .chart-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            page-break-inside: avoid;
+        }
+        .edit-history {
+            font-size: 8pt;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 150px; /* Adjust as needed */
+            overflow-y: auto; /* Scroll if content exceeds max-height */
+            page-break-inside: avoid;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 9pt;
+            page-break-inside: auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #00734A; /* Verde Unimed */
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ report_data.title }}</h1>
+
+    <div class="audit-info">
+        <h2>Informações de Auditoria</h2>
+        <p><strong>UUID do Relatório:</strong> {{ report_data.report_uuid }}</p>
+        <p><strong>Gerado por:</strong> {{ report_data.generated_by_username }}</p>
+        <p><strong>Data e Hora da Geração:</strong> {{ report_data.generation_date_str }}</p>
+        <p><strong>Fonte dos Dados Utilizados:</strong> {{ report_data.data_source_info }}</p>
+        <p><strong>Auditor Responsável:</strong> {{ report_data.auditor_responsible_name }} (ID/CRM: {{ report_data.auditor_responsible_id }})</p>
+        <p><strong>Versão do Relatório:</strong> {{ report_data.version }}</p>
+        <p><strong>Status da Assinatura Digital/Integridade:</strong> {{ report_data.digital_signature_info }}</p>
+    </div>
+
+    <div class="report-section">
+        <h2>Resumo Executivo</h2>
+        <ul>
+            {% for item in report_data.summary %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if report_data.charts %}
+    <div class="report-section">
+        <h2>Gráficos</h2>
+        {% for chart_url in report_data.charts %}
+            <img src="{{ chart_url }}" alt="Gráfico do Relatório" class="chart-image">
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Adicionar aqui outras seções detalhadas do relatório, se houver -->
+    <!-- Exemplo: 
+    <div class="report-section">
+        <h2>Dados Detalhados</h2>
+        <table>
+            <thead>
+                <tr><th>Coluna 1</th><th>Coluna 2</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Dado A1</td><td>Dado B1</td></tr>
+                <tr><td>Dado A2</td><td>Dado B2</td></tr>
+            </tbody>
+        </table>
+    </div>
+    -->
+
+    <div class="report-section">
+        <h2>Histórico de Edições/Reemissões</h2>
+        <div class="edit-history">
+            <pre>{{ report_data.edit_history_str }}</pre>
+        </div>
+    </div>
+
+</body>
+</html>
+

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🟢 Plataforma Analítica Lotus - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css"> <!-- Usaremos o mesmo CSS base por enquanto -->
+    <style>
+        /* Estilos específicos para o dashboard */
+        .dashboard-container {
+            width: 90%;
+            max-width: 1200px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            color: #00734A; /* Verde Unimed */
+            margin: 0;
+        }
+        nav a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: #00509E; /* Azul EVS */
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .logout-btn {
+            background-color: #d9534f;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: #c9302c;
+        }
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card h3 {
+            color: #00509E; /* Azul EVS */
+            margin-top: 0;
+        }
+        /* Adicionar mais estilos para os cards e conteúdo do dashboard */
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Painel de Controle</h1>
+            <div>
+                <span style="margin-right:20px;">Bem-vindo(a), [Nome do Usuário] ([Perfil])</span>
+                <a href="/logout" class="logout-btn">Sair</a>
+            </div>
+        </header>
+
+        <nav>
+            <a href="/dashboard">Início</a>
+            <a href="/pacientes">Pacientes</a>
+            <a href="/profissionais">Profissionais</a>
+            <a href="/clinicas">Clínicas</a>
+            <a href="/terapias">Terapias</a>
+            <a href="/documentos">Importar Documentos</a>
+            <a href="/relatorios">Relatórios</a>
+            <a href="/auditoria">Auditoria</a>
+            <a href="/alertas">Alertas</a>
+            <!-- Adicionar mais links conforme perfis e funcionalidades -->
+        </nav>
+
+        <div class="dashboard-content" style="margin-top: 20px;">
+            <!-- Cards de exemplo -->
+            <div class="card">
+                <h3>Pacientes Ativos</h3>
+                <p>[Número]</p>
+            </div>
+            <div class="card">
+                <h3>Sessões Agendadas Hoje</h3>
+                <p>[Número]</p>
+            </div>
+            <div class="card">
+                <h3>Alertas Pendentes</h3>
+                <p>[Número]</p>
+                <a href="/alertas">Ver Alertas</a>
+            </div>
+            <div class="card">
+                <h3>Últimos Relatórios Gerados</h3>
+                <p><a href="#">Relatório Mensal - Abril 2025</a></p>
+                <p><a href="#">Relatório de Heavy Users - Q1 2025</a></p>
+            </div>
+            <!-- Adicionar mais cards e informações dinâmicas aqui -->
+        </div>
+
+        <div style="margin-top: 30px; text-align:center;">
+            <button onclick="alert(\'Funcionalidade em desenvolvimento!\')">Cadastrar Novo Paciente</button>
+            <button onclick="alert(\'Funcionalidade em desenvolvimento!\')">Gerar Relatório Rápido</button>
+            <button onclick="alert(\'Funcionalidade em desenvolvimento!\')">Importar Documentos</button>
+        </div>
+
+    </div>
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🟢 Plataforma Analítica Lotus - Gestão de Sessões</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .sessions-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px; /* Aumentado para acomodar tabela */
+            margin-top: 20px;
+            text-align: left;
+        }
+        .sessions-container h2 {
+            color: #00734A; /* Verde Unimed */
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .table-container {
+            overflow-x: auto; /* Para tabelas responsivas */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 0.95em;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {background-color: #f9f9f9;}
+        tr:hover {background-color: #f1f1f1;}
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+            color: black;
+        }
+        .btn-view {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .btn-add-session {
+            background-color: #00509E; /* Azul EVS */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .filter-form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .filter-form .form-group {
+            margin-bottom: 0;
+        }
+        .filter-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .filter-form input[type="date"], .filter-form select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            min-width: 150px;
+        }
+        .filter-form button {
+             background-color: #00734A; /* Verde Unimed */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" style="width: 95%; max-width: 1200px; margin: 20px auto;">
+        <header>
+            <h1>Gestão de Sessões de Terapia</h1>
+            <div>
+                <span style="margin-right:20px;">Usuário: {{ username }} ({{ profile }})</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Sair</a>
+            </div>
+        </header>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Início</a>
+            <a href="#">Pacientes</a> <!-- Atualizar links -->
+            <a href="{{ url_for('importar_documentos') }}">Importar Documentos</a>
+            <a href="{{ url_for('listar_sessoes') }}">Sessões</a>
+            <a href="#">Relatórios</a>
+        </nav>
+
+        <div class="sessions-container">
+            <h2>Lista de Sessões</h2>
+            
+            <a href="#" class="btn-add-session">Adicionar Nova Sessão</a> <!-- Link para formulário de nova sessão -->
+
+            <!-- Filtros (Exemplo) -->
+            <form method="GET" action="{{ url_for('listar_sessoes') }}" class="filter-form">
+                <div class="form-group">
+                    <label for="filtro_paciente">Paciente:</label>
+                    <input type="text" id="filtro_paciente" name="filtro_paciente" value="{{ request.args.get('filtro_paciente', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="filtro_status">Status:</label>
+                    <select id="filtro_status" name="filtro_status">
+                        <option value="">Todos</option>
+                        <option value="Agendada" {% if request.args.get('filtro_status') == 'Agendada' %}selected{% endif %}>Agendada</option>
+                        <option value="Realizada" {% if request.args.get('filtro_status') == 'Realizada' %}selected{% endif %}>Realizada</option>
+                        <option value="Cancelada" {% if request.args.get('filtro_status') == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                        <option value="Autorizada" {% if request.args.get('filtro_status') == 'Autorizada' %}selected{% endif %}>Autorizada</option>
+                        <option value="Pendente Autorização" {% if request.args.get('filtro_status') == 'Pendente Autorização' %}selected{% endif %}>Pendente Autorização</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro_data_inicio">Data Início:</label>
+                    <input type="date" id="filtro_data_inicio" name="filtro_data_inicio" value="{{ request.args.get('filtro_data_inicio', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="filtro_data_fim">Data Fim:</label>
+                    <input type="date" id="filtro_data_fim" name="filtro_data_fim" value="{{ request.args.get('filtro_data_fim', '') }}">
+                </div>
+                <button type="submit">Filtrar</button>
+            </form>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Paciente</th>
+                            <th>Terapeuta</th>
+                            <th>Clínica</th>
+                            <th>Tipo de Terapia</th>
+                            <th>Data da Sessão</th>
+                            <th>Duração (min)</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if sessoes %}
+                            {% for sessao in sessoes %}
+                            <tr>
+                                <td>{{ sessao.id }}</td>
+                                <td>{{ sessao.patient.full_name if sessao.patient else 'N/A' }}</td>
+                                <td>{{ sessao.therapist.full_name if sessao.therapist else 'N/A' }}</td>
+                                <td>{{ sessao.clinic.name if sessao.clinic else 'N/A' }}</td>
+                                <td>{{ sessao.therapy_type }}</td>
+                                <td>{{ sessao.session_date.strftime('%d/%m/%Y %H:%M') if sessao.session_date else 'N/A' }}</td>
+                                <td>{{ sessao.duration_minutes }}</td>
+                                <td>{{ sessao.status }}</td>
+                                <td>
+                                    <a href="#" class="action-btn btn-view">Ver</a> <!-- Link para ver detalhes -->
+                                    <a href="#" class="action-btn btn-edit">Editar</a> <!-- Link para editar sessão -->
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="9" style="text-align:center;">Nenhuma sessão encontrada.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🟢 Plataforma Analítica Lotus - Cadastro</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="login-container"> <!-- Reutilizando o estilo do container de login para consistência -->
+        <h2>Cadastro de Novo Usuário</h2>
+        <form id="cadastroForm" method="POST" action="/cadastro">
+            <div>
+                <label for="fullName">Nome Completo:</label>
+                <input type="text" id="fullName" name="fullName" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="username">Usuário (para login):</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div>
+                <label for="confirmPassword">Confirmar Senha:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div>
+                <label for="profile">Perfil:</label>
+                <select id="profile" name="profile" required>
+                    <option value="medico">Médico</option>
+                    <option value="terapeuta">Terapeuta</option>
+                    <option value="auditor">Auditor</option>
+                    <!-- Administradores talvez sejam criados de outra forma, ou com permissão especial -->
+                </select>
+            </div>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p><a href="/login">Já tem uma conta? Faça login</a></p>
+    </div>
+    <script src="/static/js/script.js"></script> <!-- Adicionar validações JS aqui se necessário -->
+</body>
+</html>

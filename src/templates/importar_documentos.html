@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🟢 Plataforma Analítica Lotus - Importar Documentos</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .import-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .import-container h2 {
+            color: #00734A; /* Verde Unimed */
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .btn-submit {
+            background-color: #00509E; /* Azul EVS */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .btn-submit:hover {
+            background-color: #003d7a;
+        }
+        .preview-area {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            min-height: 100px;
+        }
+        .preview-area h4 {
+            margin-top: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" style="width: 90%; max-width: 800px; margin: 20px auto;">
+        <header>
+            <h1>Importar Documentos</h1>
+            <div>
+                <span style="margin-right:20px;">Usuário: {{ username }} ({{ profile }})</span>
+                <a href="/logout" class="logout-btn">Sair</a>
+            </div>
+        </header>
+        <nav>
+            <a href="/dashboard">Início</a>
+            <a href="#">Pacientes</a> <!-- Atualizar links -->
+            <a href="/documentos">Importar Documentos</a>
+            <a href="#">Relatórios</a>
+        </nav>
+
+        <div class="import-container">
+            <h2>Upload de Arquivos</h2>
+            <form id="importForm" method="POST" action="/importar_documentos" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="documentFile">Selecione o arquivo para importar:</label>
+                    <input type="file" id="documentFile" name="documentFile" accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.ppt,.pptx,.txt,.rtf,.xml,.json,.odt" required>
+                </div>
+                <button type="submit" class="btn-submit">Enviar e Pré-visualizar</button>
+            </form>
+
+            <div class="preview-area" id="previewArea">
+                <h4>Dados Extraídos (Pré-visualização)</h4>
+                {% if preview_data %}
+                    <p><strong>Arquivo Original:</strong> {{ original_filename }}</p>
+                    <form id="correctionForm" method="POST" action="{{ url_for('gravar_dados_importados') }}">
+                        <input type="hidden" name="imported_file_id" value="{{ file_id }}">
+                        
+                        <div class="form-group">
+                            <label for="nome_paciente">Nome do Paciente:</label>
+                            <input type="text" id="nome_paciente" name="nome_paciente" value="{{ preview_data.get('nome_paciente', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="idade_paciente">Idade:</label>
+                            <input type="text" id="idade_paciente" name="idade_paciente" value="{{ preview_data.get('idade_paciente', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_terapia">Tipo de Terapia:</label>
+                            <input type="text" id="tipo_terapia" name="tipo_terapia" value="{{ preview_data.get('tipo_terapia', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="nome_clinica">Nome da Clínica:</label>
+                            <input type="text" id="nome_clinica" name="nome_clinica" value="{{ preview_data.get('nome_clinica', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="medico_solicitante">Médico Solicitante:</label>
+                            <input type="text" id="medico_solicitante" name="medico_solicitante" value="{{ preview_data.get('medico_solicitante', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="frequencia_terapia">Frequência:</label>
+                            <input type="text" id="frequencia_terapia" name="frequencia_terapia" value="{{ preview_data.get('frequencia_terapia', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="data_inicio_terapia">Data de Início:</label>
+                            <input type="text" id="data_inicio_terapia" name="data_inicio_terapia" value="{{ preview_data.get('data_inicio_terapia', '') or '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="tempo_total_terapia">Tempo Total de Terapia:</label>
+                            <input type="text" id="tempo_total_terapia" name="tempo_total_terapia" value="{{ preview_data.get('tempo_total_terapia', '') or '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="raw_text_preview">Texto Completo Extraído (para referência):</label>
+                            <textarea id="raw_text_preview" name="raw_text_preview" rows="10" readonly style="width: 100%; font-size: 0.8em; background-color: #eee;">{{ preview_data.get('raw_text', 'Nenhum texto extraído.') }}</textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit" style="margin-top:15px; background-color: #00734A;">Corrigir e Gravar Dados</button>
+                    </form>
+                {% elif error %}
+                    <p style="color: red;">Erro: {{ error }}</p>
+                    <p><i>Aguardando novo arquivo para processamento...</i></p>
+                {% else %}
+                    <p><i>Aguardando arquivo para processamento...</i></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+    <script>
+        // Adicionar JS específico para a página de importação se necessário
+        // Por exemplo, para mostrar o nome do arquivo selecionado ou feedback de upload.
+        const fileInput = document.getElementById('documentFile');
+        if(fileInput){
+            fileInput.onchange = () => {
+                if (fileInput.files.length > 0) {
+                    const fileName = fileInput.files[0].name;
+                    console.log('Arquivo selecionado:', fileName);
+                    // Poderia atualizar um label com o nome do arquivo
+                }
+            }
+        }
+    </script>
+</body>
+</html>

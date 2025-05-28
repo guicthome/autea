@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🟢 Plataforma Analítica Lotus - Relatórios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .reports-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .reports-container h2 {
+            color: #00734A; /* Verde Unimed */
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .report-options {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .report-options label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .report-options select, .report-options input[type="date"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-right: 15px;
+        }
+        .report-options button {
+            background-color: #00509E; /* Azul EVS */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .report-view {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .report-view h3 {
+            color: #00509E; /* Azul EVS */
+            margin-top: 0;
+        }
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        .export-buttons button {
+            margin-right: 10px;
+            padding: 8px 12px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .export-buttons button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container" style="width: 95%; max-width: 1200px; margin: 20px auto;">
+        <header>
+            <h1>Geração de Relatórios</h1>
+            <div>
+                <span style="margin-right:20px;">Usuário: {{ username }} ({{ profile }})</span>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Sair</a>
+            </div>
+        </header>
+        <nav>
+            <a href="{{ url_for('dashboard') }}">Início</a>
+            <a href="#">Pacientes</a> <!-- Atualizar links -->
+            <a href="{{ url_for('importar_documentos') }}">Importar Documentos</a>
+            <a href="{{ url_for('listar_sessoes') }}">Sessões</a>
+            <a href="{{ url_for('gerar_relatorio') }}">Relatórios</a>
+        </nav>
+
+        <div class="reports-container">
+            <h2>Configurar e Gerar Relatório</h2>
+
+            <form method="POST" action="{{ url_for('gerar_relatorio') }}" class="report-options">
+                <label for="report_type">Tipo de Relatório:</label>
+                <select name="report_type" id="report_type">
+                    <option value="auditoria_geral">Auditoria Geral</option>
+                    <option value="desempenho_clinica">Desempenho por Clínica</option>
+                    <option value="uso_paciente">Uso por Paciente</option>
+                </select>
+                <!-- Adicionar filtros de data, etc., conforme necessário -->
+                <label for="data_inicio_rel">Data Início:</label>
+                <input type="date" id="data_inicio_rel" name="data_inicio_rel">
+                <label for="data_fim_rel">Data Fim:</label>
+                <input type="date" id="data_fim_rel" name="data_fim_rel">
+                <button type="submit">Gerar Relatório</button>
+                       {% if report_data and not report_data.get("error") %}
+            <div class="report-view">
+                <h3>{{ report_data.title }}</h3>
+                <p><strong>UUID do Relatório:</strong> {{ report_data.report_uuid }}</p>
+                <p><strong>Gerado por:</strong> {{ report_data.generated_by_username }} em {{ report_data.generation_date_str }}</p>
+                <p><strong>Período Analisado:</strong> {{ report_data.period }}</p>
+                <p><strong>Fonte dos Dados:</strong> {{ report_data.data_source_info }}</p>
+                <p><strong>Auditor Responsável:</strong> {{ report_data.auditor_responsible_name }} ({{ report_data.auditor_responsible_id }})</p>
+                <p><strong>Versão:</strong> {{ report_data.version }}</p>
+                <p><strong>Status da Assinatura Digital:</strong> {{ report_data.digital_signature_info }}</p>
+                
+                <h4>Resumo Executivo:</h4>
+                <ul>
+                    {% for item in report_data.summary %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h4>Gráficos:</h4>
+                {% for chart_url in report_data.charts %}
+                    <img src="{{ chart_url }}" alt="Gráfico do Relatório" style="max-width:100%; height:auto; margin-bottom:15px; border:1px solid #ccc;">
+                {% else %}
+                    <div class="chart-placeholder">Nenhum gráfico gerado para este relatório.</div>
+                {% endfor %}
+                
+                <h4>Histórico de Edições:</h4>
+                <pre style="font-size: 0.8em; background-color: #eee; padding: 10px; border-radius: 4px; max-height: 150px; overflow-y: auto;">{{ report_data.edit_history_str }}</pre>
+
+                <div class="export-buttons" style="margin-top: 20px;">
+                    <button onclick="alert(\'Funcionalidade de exportar para HTML em desenvolvimento.\')">Exportar HTML</button>
+                    <a href="{{ url_for('export_report_pdf', report_uuid=report_data.report_uuid) }}" target="_blank">
+                        <button>Exportar PDF</button>
+                    </a>
+                    <button onclick="alert(\'Funcionalidade de exportar para Word em desenvolvimento.\')">Exportar Word</button>
+                    <button onclick="alert(\'Funcionalidade de exportar para Excel em desenvolvimento.\')">Exportar Excel</button>
+                </div>
+            </div>
+            {% elif report_data and report_data.get("error") %}
+            <div class="report-view">
+                <p style="color: red;">Erro ao gerar relatório: {{ report_data.error }}</p>
+            </div>
+            {% elif request.method == \'POST\' %}
+            <div class="report-view">
+                 <p><i>Nenhum dado para exibir ou relatório ainda não gerado. Verifique os filtros e tente novamente.</i></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

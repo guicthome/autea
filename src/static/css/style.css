@@ -1,0 +1,96 @@
+/* Estilos Globais */
+body {
+    font-family: 'Arial', sans-serif; /* Tipografia moderna e legível */
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6; /* Um cinza claro para o fundo, neutro */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container do Login */
+.login-container {
+    background-color: #ffffff; /* Branco para o container */
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-container h2 {
+    color: #00734A; /* Verde Unimed para títulos */
+    margin-bottom: 25px;
+}
+
+/* Estilos do Formulário */
+#loginForm div {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+#loginForm label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: bold;
+}
+
+#loginForm input[type="text"],
+#loginForm input[type="password"],
+#loginForm select {
+    width: calc(100% - 22px); /* Ajuste para padding e borda */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#loginForm select {
+    width: 100%;
+}
+
+#loginForm button[type="submit"] {
+    background-color: #00509E; /* Azul EVS para o botão principal */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+#loginForm button[type="submit"]:hover {
+    background-color: #003d7a; /* Tom mais escuro do Azul EVS para hover */
+}
+
+/* Links */
+.login-container p a {
+    color: #00734A; /* Verde Unimed para links */
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.login-container p a:hover {
+    text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .login-container {
+        padding: 20px;
+    }
+
+    #loginForm input[type="text"],
+    #loginForm input[type="password"],
+    #loginForm select,
+    #loginForm button[type="submit"] {
+        font-size: 15px;
+    }
+}
