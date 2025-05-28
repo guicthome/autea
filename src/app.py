@@ -29,7 +29,8 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".") # Em desenvolvimento, usa o diretório atual do script
     return os.path.join(base_path, relative_path)
 
-app = Flask(__name__, template_folder=resource_path("templates"), static_folder=resource_path("static"))
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+            static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
 # Configuração do banco de dados - Adaptado para ambiente de produção
 DATABASE_URL = os.environ.get("DATABASE_URL")
